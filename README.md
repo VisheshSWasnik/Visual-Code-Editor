@@ -40,8 +40,9 @@ A visual programming environment inspired by MIT Scratch, built with React. Crea
 
 1. Clone the repository:
 git clone <repository-url>
-cd scratch-starter-project2. Install dependencies:
-npm install3. Start the development server:
+cd scratch-starter-project
+2. Install dependencies: npm install
+3. Start the development server:
 npm start4. Open [http://localhost:3000](http://localhost:3000) in your browser
 
 ### Building for Production
@@ -53,7 +54,8 @@ npm run buildThis creates optimized production files in the `public` directory.
 ### Deploy to Vercel
 
 1. Install Vercel CLI:
-npm i -g vercel2. Deploy:
+npm i -g vercel
+2. Deploy:
 vercelOr connect your GitHub repository to Vercel for automatic deployments.
 
 ## Project Structure
