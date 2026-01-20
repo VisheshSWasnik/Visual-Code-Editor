@@ -13,24 +13,42 @@ export default function InputField({
 
   useEffect(() => {
     if (dynamicWidth && inputRef.current) {
-      // Create a temporary span to measure text width
-      const measureElement = document.createElement('span');
-      measureElement.style.visibility = 'hidden';
-      measureElement.style.position = 'absolute';
-      measureElement.style.fontSize = window.getComputedStyle(inputRef.current).fontSize;
-      measureElement.style.fontFamily = window.getComputedStyle(inputRef.current).fontFamily;
-      measureElement.style.padding = '0';
-      measureElement.textContent = value !== undefined && value !== null ? String(value) : placeholder || '0';
-      document.body.appendChild(measureElement);
-      
-      const measuredWidth = measureElement.offsetWidth;
-      document.body.removeChild(measureElement);
-      
-      // Add padding (px-2 = 8px on each side = 16px total) and minimum width
-      const minWidth = 48; // min-w-12 equivalent
-      const padding = 16;
-      const newWidth = Math.max(minWidth, measuredWidth + padding + 8); // +8 for extra space
-      setWidth(newWidth);
+      requestAnimationFrame(() => {
+        if (!inputRef.current) return;
+        
+        const originalWidth = inputRef.current.style.width;
+        inputRef.current.style.width = 'auto';
+        
+        const measureElement = document.createElement('span');
+        measureElement.style.visibility = 'hidden';
+        measureElement.style.position = 'absolute';
+        measureElement.style.whiteSpace = 'pre'; // Preserve whitespace
+        measureElement.style.fontSize = window.getComputedStyle(inputRef.current).fontSize;
+        measureElement.style.fontFamily = window.getComputedStyle(inputRef.current).fontFamily;
+        measureElement.style.fontWeight = window.getComputedStyle(inputRef.current).fontWeight;
+        measureElement.style.letterSpacing = window.getComputedStyle(inputRef.current).letterSpacing;
+        measureElement.style.padding = '0';
+        measureElement.style.border = 'none';
+        measureElement.style.margin = '0';
+        
+        // Use the actual value or placeholder, ensuring we measure the full text
+        const textToMeasure = value !== undefined && value !== null ? String(value) : placeholder || '0';
+        measureElement.textContent = textToMeasure;
+        document.body.appendChild(measureElement);
+        
+        const measuredWidth = measureElement.offsetWidth;
+        document.body.removeChild(measureElement);
+        
+        // Restore original width
+        inputRef.current.style.width = originalWidth;
+        
+        const minWidth = 48; 
+        const padding = 16;
+        const border = 2; 
+        const buffer = 16; 
+        const newWidth = Math.max(minWidth, measuredWidth + padding + border + buffer);
+        setWidth(newWidth);
+      });
     }
   }, [value, placeholder, dynamicWidth]);
 
@@ -46,7 +64,11 @@ export default function InputField({
       onChange={(e) => onChange(e.target.value)}
       placeholder={placeholder}
       className={baseClasses}
-      style={dynamicWidth && width ? { width: `${width}px`, minWidth: '48px' } : {}}
+      style={dynamicWidth && width ? { 
+        width: `${width}px`, 
+        minWidth: '48px', 
+        boxSizing: 'border-box'
+      } : {}}
       onClick={(e) => e.stopPropagation()}
       onMouseDown={(e) => e.stopPropagation()}
     />
