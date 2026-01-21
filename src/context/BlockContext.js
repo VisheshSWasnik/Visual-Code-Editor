@@ -43,10 +43,34 @@ export const BlockProvider = ({ children }) => {
         }
         return block;
       });
-      // Then remove the block itself
-      return updatedBlocks.filter((block) => block.id !== id);
+
+      const finalBlocks = updatedBlocks.filter((block) => block.id !== id);
+
+      // If the selected sprite no longer has any blocks, reset it to original position/rotation
+      const hasBlocksForSelectedSprite = finalBlocks.some(
+        (block) => block.spriteId === selectedSpriteId
+      );
+
+      if (!hasBlocksForSelectedSprite) {
+        setSprites((prevSprites) =>
+          prevSprites.map((sprite) =>
+            sprite.id === selectedSpriteId
+              ? {
+                  ...sprite,
+                  x: 0,
+                  y: 0,
+                  rotation: 0,
+                  speechBubble: null,
+                  thoughtBubble: null,
+                }
+              : sprite
+          )
+        );
+      }
+
+      return finalBlocks;
     });
-  }, []);
+  }, [selectedSpriteId]);
 
   const updateBlock = useCallback((id, updates) => {
     setBlocks((prev) =>
@@ -59,6 +83,17 @@ export const BlockProvider = ({ children }) => {
 
   const clearBlocks = useCallback(() => {
     setBlocks([]);
+    // Reset all sprites to their original position/rotation when workspace is cleared
+    setSprites((prevSprites) =>
+      prevSprites.map((sprite) => ({
+        ...sprite,
+        x: 0,
+        y: 0,
+        rotation: 0,
+        speechBubble: null,
+        thoughtBubble: null,
+      }))
+    );
   }, []);
 
   // Reorder blocks - move a block to a new position

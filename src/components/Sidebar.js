@@ -70,7 +70,6 @@ export default function Sidebar() {
       icon: "↻",
       blocks: [
         { component: MotionMoveSteps, type: "motion_move_steps" },
-        { component: MotionTurnDegrees, type: "motion_turn_degrees", direction: "counterclockwise" },
         { component: MotionTurnDegrees, type: "motion_turn_degrees", direction: "clockwise" },
         { component: MotionGotoXY, type: "motion_goto_xy" }
       ]
